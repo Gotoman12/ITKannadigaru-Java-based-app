@@ -44,7 +44,7 @@ pipeline{
                sh '''
                docker kill itkannada
                docker rm itkannada
-                docker run -it -d --name itkannada -p 6001:8080
+               docker run -it -d --name itkannada -p 6001:8080
             '''
             }
             
