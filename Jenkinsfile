@@ -5,7 +5,7 @@ pipeline{
         maven 'maven'
     }
     environment {
-        IMAGE_NAME= Gotoman12/ITKannada:$(GIT_COMMIT)
+        IMAGE_NAME= Gotoman12/ITKannada:${GIT_COMMIT}
     }
     stages{
         stage("CHECKOUT STAGE"){
@@ -24,7 +24,15 @@ pipeline{
          stage("packing"){
             steps{
                sh '''
-                  mvn install package
+                  mvn clean package
+            '''
+            }
+            
+        }
+        stage("docker build"){
+            steps{
+               sh '''
+                  docker build -t ${IMAGE_NAME}
             '''
             }
             
