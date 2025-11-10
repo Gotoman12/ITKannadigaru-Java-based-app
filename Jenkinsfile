@@ -32,7 +32,8 @@ pipeline{
         stage("docker build"){
             steps{
                sh '''
-                  docker build -t ${IMAGE_NAME}
+                printenv
+                  docker build -t ${IMAGE_NAME} .
             '''
             }
             
