@@ -41,7 +41,7 @@ pipeline{
         stage("docker testing"){
             steps{
                sh '''
-               docker run -it -d --name itkannada -p 6001:8080
+               docker run -it -d --name itkannada -p 6001:8080 ${IMAGE_NAME}
             '''
             }
             
