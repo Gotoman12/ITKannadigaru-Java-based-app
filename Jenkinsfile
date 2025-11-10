@@ -39,5 +39,16 @@ pipeline{
             
         }
     }
+     stage("docker testing"){
+            steps{
+               sh '''
+               docker kill itkannada
+               docker rm itkannada
+                docker run -it -d --name itkannada -p 9000:8080
+            '''
+            }
+            
+        }
+    }
    
 }
