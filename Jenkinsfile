@@ -5,7 +5,7 @@ pipeline{
         maven 'maven'
     }
     environment {
-        IMAGE_NAME= Gotoman12/ITKannada:${GIT_COMMIT}
+        IMAGE_NAME= "Gotoman12/ITKannada:${GIT_COMMIT}"
     }
     stages{
         stage("CHECKOUT STAGE"){
