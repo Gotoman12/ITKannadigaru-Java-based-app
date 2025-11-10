@@ -38,8 +38,7 @@ pipeline{
             }
             
         }
-    }
-     stage("docker testing"){
+        stage("docker testing"){
             steps{
                sh '''
                docker kill itkannada
@@ -50,3 +49,5 @@ pipeline{
             
         }
     }
+
+}
