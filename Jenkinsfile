@@ -57,6 +57,13 @@ pipeline{
                   }
             }
         }
+        stage("push to dockerhub"){
+            steps{ 
+                sh '''
+                docker push ${IMAGE_NAME}
+                '''
+            }
+        }
       
     }
 
