@@ -1,71 +1,39 @@
 pipeline{
     agent any 
+
     tools{
-        jdk 'jdk-17'
-        maven 'maven'
+        jdk 'java-17'
+        maven 'Maven'
     }
-    environment {
-        IMAGE_NAME= "gotoman12/itkananda:${GIT_COMMIT}"
+
+    environment{
+        IMAGE_NAME = arjunckm/javaproject:$(GIT_COMMIT)
     }
     stages{
-        stage("CHECKOUT STAGE"){
+        stage('GIT_CHECKOUT'){
             steps{
-                git url: "https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git", branch: 'main'
-            }
+                    git url:'https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git',branch:'main'
+            } 
         }
-        stage("compile"){
+        stage('compile'){
             steps{
-               sh '''
-                  mvn compile
-            '''
+                sh 'mvn compile'
             }
-            
         }
-         stage("packing"){
+        stage('package'){
             steps{
-               sh '''
-                  mvn clean package
-            '''
+                sh 'mvn clean package'
             }
-            
         }
-        stage("docker build"){
+        stage('docker-build'){
             steps{
-               sh '''
-                printenv
-                  docker build -t ${IMAGE_NAME} .
-            '''
+                sh 'docker build -t $(IMAGE_NAME) .'
             }
-            
         }
-        stage("docker testing"){
+          stage('docker-test'){
             steps{
-               sh '''
-               docker kill itkannada
-               docker rm itkannada
-               docker run -it -d --name itkannada -p 6001:8080 ${IMAGE_NAME}
-            '''
-            }
-           
-        }
-        stage("push to docker hub"){
-            steps {
-                  script{
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
-                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                    }
-                  }
+                sh 'docker run -it -d --name javaproject-test -p 9000:8080 $(IMAGE_NAME)'
             }
         }
-        stage("push to dockerhub"){
-            steps{ 
-                sh '''
-                docker push ${IMAGE_NAME}
-                '''
-            }
-        }
-      
     }
-
 }
-
