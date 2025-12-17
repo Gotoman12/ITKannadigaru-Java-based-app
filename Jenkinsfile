@@ -1,13 +1,12 @@
 pipeline{
     agent any 
-
     tools{
         jdk 'java-17'
         maven 'Maven'
     }
 
     environment{
-        IMAGE_NAME = "arjunckm/javaproject:$(GIT_COMMIT)"
+        IMAGE_NAME = "arjunckm/javaproject:${GIT_COMMIT}"
     }
     stages{
         stage('GIT_CHECKOUT'){
