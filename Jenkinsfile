@@ -28,16 +28,14 @@ pipeline{
             steps{
                 sh '''
                 printenv
-                docker build -t ${BUILD_NUMBER} .
+                docker build -t ${IMAGE_NAME} .
                 '''
             }
         }
           stage('docker-test'){
             steps{
                 sh '''
-                docker kill javaproject-test
-                docker rm javaproject-test
-                docker run -it -d --name javaproject-test -p 9000:8080 ${BUILD_NUMBER}
+                docker run -it -d --name javaproject-test -p 9000:8080 ${IMAGE_NAME}
                 '''
             }
         }
