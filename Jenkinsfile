@@ -35,6 +35,8 @@ pipeline{
           stage('docker-test'){
             steps{
                 sh '''
+                docker kill javaproject-test
+                docker rm javaproject-test
                 docker run -it -d --name javaproject-test -p 9000:8080 ${BUILD_NUMBER}
                 '''
             }
