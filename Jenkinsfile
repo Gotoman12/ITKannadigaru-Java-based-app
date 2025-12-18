@@ -6,7 +6,7 @@ pipeline{
     }
 
     environment{
-        IMAGE_NAME = "arjunckm/javaproject:${GIT_COMMIT}"
+        IMAGE_NAME = "arjunckm/javaproject:${BUILD_NUMBER}"
     }
     stages{
         stage('GIT_CHECKOUT'){
