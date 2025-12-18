@@ -6,7 +6,7 @@ pipeline{
     }
 
     environment{
-        IMAGE_NAME = "arjunckm/javaproject:${GIT_COMMIT}"
+        IMAGE_NAME = "arjunckm/javaproject:${BUILD_NUMBER}"
     }
     stages{
         stage('GIT_CHECKOUT'){
@@ -28,18 +28,32 @@ pipeline{
             steps{
                 sh '''
                 printenv
-                docker build -t ${IMAGE_NAME} .
+                docker build -t ${BUILD_NUMBER} .
                 '''
             }
         }
           stage('docker-test'){
             steps{
                 sh '''
-                docker kill javaproject-test
-                docker rm javaproject-test
-                docker run -it -d --name javaproject-test -p 9000:8080 ${IMAGE_NAME}'
+                docker run -it -d --name javaproject-test -p 9000:8080 ${BUILD_NUMBER}'
                 '''
             }
+        }
+        stage('docker-cred'){
+            steps{
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker_hubcred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Login to Docker Hub
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                }
+            }
+        }
+    }
+     stage('dockerhub-push'){
+            steps{
+              sh '''
+                docker push ${BUILD_NUMBER}
+              '''
         }
     }
 }
