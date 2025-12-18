@@ -54,7 +54,7 @@ pipeline{
      stage('dockerhub-push'){
             steps{
               sh '''
-                docker push ${BUILD_NUMBER}
+                docker push ${IMAGE_NAME}
               '''
         }
     }
