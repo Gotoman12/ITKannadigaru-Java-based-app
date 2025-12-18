@@ -26,7 +26,10 @@ pipeline{
         }
         stage('docker-build'){
             steps{
-                sh 'docker build -t ${IMAGE_NAME} .'
+                sh '''
+                printenv
+                docker build -t ${IMAGE_NAME} .
+                '''
             }
         }
           stage('docker-test'){
