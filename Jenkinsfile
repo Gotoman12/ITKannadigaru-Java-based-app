@@ -76,8 +76,8 @@ pipeline {
         stage('Verify the Deployment') {
             steps {
                 withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'javaapp', restrictKubeConfigAccess: false, serverUrl: 'https://97F921246B0C22CA12CFED42E1AFF094.gr7.us-east-1.eks.amazonaws.com') {
-                    sh "kubectl get pods -n microdegree"
-                    sh "kubectl get svc -n microdegree"
+                    sh "kubectl get pods -n javaapp"
+                    sh "kubectl get svc -n javaapp"
                 }
             }
         }
