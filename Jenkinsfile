@@ -66,7 +66,7 @@ pipeline {
         
         stage('Deploy To Kubernetes') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'javaapp', restrictKubeConfigAccess: false, serverUrl: 'https://AB2AD8E7E396070F02E8CEC4D6A0D7E9.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'javaapp', restrictKubeConfigAccess: false, serverUrl: 'https://97F921246B0C22CA12CFED42E1AFF094.gr7.us-east-1.eks.amazonaws.com') {
                     sh "sed -i 's|replace|${IMAGE_NAME}|g' deployment.yml"
                     sh "kubectl apply -f deployment.yml -n ${NAMESPACE}"
                 }
@@ -75,7 +75,7 @@ pipeline {
 
         stage('Verify the Deployment') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'javaapp', restrictKubeConfigAccess: false, serverUrl: 'https://AB2AD8E7E396070F02E8CEC4D6A0D7E9.gr7.us-east-1.eks.amazonaws.com') {
+                withKubeConfig(caCertificate: '', clusterName: 'itkannadigaru-cluster', contextName: '', credentialsId: 'kube', namespace: 'javaapp', restrictKubeConfigAccess: false, serverUrl: 'https://97F921246B0C22CA12CFED42E1AFF094.gr7.us-east-1.eks.amazonaws.com') {
                     sh "kubectl get pods -n microdegree"
                     sh "kubectl get svc -n microdegree"
                 }
