@@ -1,53 +1,53 @@
-pipeline{
-    agent any 
-    tools{
+pipeline {
+    agent any
+
+    tools {
         jdk 'java-17'
         maven 'Maven'
     }
 
-    stages{
-        stage('GIT_CHECKOUT'){
-            steps{
-                    git url:'https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git',branch:'DecSecOps'
-            } 
-        }
-        stage('compile'){
-            steps{
-                sh 'mvn compile'
+    stages {
+
+        stage('GIT_CHECKOUT') {
+            steps {
+                git url: 'https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git',
+                    branch: 'DecSecOps'
             }
         }
-        stage('test'){
-            steps{
+
+        stage('Build & Test') {
+            steps {
                 sh 'mvn clean test'
             }
         }
-        stage('package'){
-            steps{
-                sh 'mvn clean package'
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
             }
         }
+
         stage('Generate JaCoCo Report') {
             steps {
-                sh '''
-                mvn clean verify
-                mvn jacoco:report
-                '''
+                sh 'mvn jacoco:report'
             }
         }
+
         stage('Publish Code Coverage') {
             steps {
-                sh '''
-                jacoco execPattern: '**/target/jacoco.exec',
-                       classPattern: '**/target/classes',
-                       sourcePattern: '**/src/main/java',
-                       inclusionPattern: '**/*.class'
-                       '''
+                jacoco(
+                    execPattern: '**/target/jacoco.exec',
+                    classPattern: '**/target/classes',
+                    sourcePattern: '**/src/main/java',
+                    inclusionPattern: '**/*.class'
+                )
             }
         }
-        post{
-            always {
-                junit "**/target/surefire-reports/*.xml"
-            }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
         }
     }
 }
