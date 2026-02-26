@@ -44,5 +44,13 @@ pipeline{
                 '''
             }
         }
+        stage("statefile backup"){
+            steps{
+                sh '''
+                     cd eks
+                     aws s3 cp *.tfstate s3://star-method-arjun-s3/eks-backup/
+                '''
+            }
+        }
     }
 }
