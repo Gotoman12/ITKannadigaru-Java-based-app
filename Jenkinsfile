@@ -12,7 +12,9 @@ pipeline{
 
     stages{
         stage("GIT_CLONING"){
-            git url: "https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git" , branch:"iac-qa"
+            steps{
+              git url: "https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git" , branch:"iac-qa"
+            }
         } 
         stage("Plan"){
             steps{
