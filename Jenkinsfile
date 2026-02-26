@@ -1,60 +1,118 @@
 pipeline{
-    agent any 
-    tools{
-        jdk 'java-17'
-        maven 'Maven'
-    }
+    agent any
 
     environment{
-        IMAGE_NAME = "arjunckm/javaproject:${BUILD_NUMBER}"
+        IMAGE_NAME = "drinkapp"
+        IMAGE_TAG = "dev"
+        CLUSTERNAME = "drink-cluster"
+        NAMESPACE = "foo"
+        FINALIAMGE =  "arjunckm/${IMAGE_NAME}:${IMAGE_TAG}"
+        AWS_REGION = "us-east-1"
     }
+
+    tools{
+        jdk 'java-17'
+        maven 'maven'
+    }
+
     stages{
-        stage('GIT_CHECKOUT'){
+        stage("GIT-CLONING"){
             steps{
-                    git url:'https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git',branch:'main'
-            } 
-        }
-        stage('compile'){
-            steps{
-                sh 'mvn compile'
+               git url :"https://github.com/Gotoman12/ITKannadigaru-Java-based-app.git",branch: "main"
             }
         }
-        stage('package'){
+        stage("Build"){
             steps{
-                sh 'mvn clean package'
+             sh 'mvn compile'
             }
         }
-        stage('docker-build'){
+        stage("Package"){
             steps{
-                sh '''
-                printenv
-                docker build -t ${IMAGE_NAME} .
-                '''
+             sh 'mvn clean package'
             }
         }
-          stage('docker-test'){
-            steps{
-                sh '''
-                docker run -it -d --name javaproject-test -p 9000:8080 ${IMAGE_NAME}
-                '''
-            }
+        stage("Docker Build"){
+           steps{
+              sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+           }
         }
-        stage('docker-cred'){
+        stage("Docker Login"){
+           steps{
+             script{
+                withCredentials([usernamePassword(credentialsId::"DOCKER_CRED",usernameVariable:"DOCKER_USER",passwordVariable:"DOCKER_PASS")]){
+                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+             }
+           }
+        }
+        stage("Docker TAG"){
+           steps{
+            sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${FINALIAMGE}'
+           }
+        }
+        stage("Docker PUSH"){
+           steps{
+            sh 'docker push ${FINALIAMGE}'
+           }
+        }
+        stage("K8s update"){
+           steps{
+            sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
+           }
+        }
+        stage("Deploy K8s"){
             steps{
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'docker_hubcred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // Login to Docker Hub
-                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                script{
+                    withKubeConfig(
+                         caCertificate: '',
+                    clusterName: '${CLUSTERNAME}',
+                    contextName: '',
+                    credentialsId: 'kube',
+                    namespace: '${NAMESPACE}',
+                    restrictKubeConfigAccess: false,
+                    serverUrl: 'https://54DF911C3F6C051EFB5FC99F1B8B73ED.gr7.us-east-1.eks.amazonaws.com'
+                )
+                    {
+                        sh '''
+                            sed -i "s|replace|${FINALIAMGE}|g' deployment.yaml
+                            kubectl apply -f deployment.yaml -n ${NAMESPACE} --timeout=600s
+                            kubectl apply -f service.yaml -n ${NAMESPACE}
+                        '''
+                    }
+                }
+            }
+            post{
+                always{
+                    sh 'kubectl rollout status deploy/drink-app -n ${NAMESPACE}' 
+                }
+                success{
+                    sh 'Deployed the application in eks and pipeline : pass'
+                }
+                failure{
+                    sh 'Pipeline : failed'
                 }
             }
         }
-    }
-     stage('dockerhub-push'){
+          stage("Deploy K8s"){
             steps{
-              sh '''
-                docker push ${IMAGE_NAME}
-              '''
+                script{
+                    withKubeConfig(
+                         caCertificate: '',
+                    clusterName: '${CLUSTERNAME}',
+                    contextName: '',
+                    credentialsId: 'kube',
+                    namespace: '${NAMESPACE}',
+                    restrictKubeConfigAccess: false,
+                    serverUrl: 'https://54DF911C3F6C051EFB5FC99F1B8B73ED.gr7.us-east-1.eks.amazonaws.com'
+                )
+                    {
+                        sh '''
+                            kubectl get pods -n ${NAMESPACE}
+                            kubectl get svc -n ${NAMESPACE}
+                        '''
+                    }
+                }
+            }
         }
-    }
     }
 }

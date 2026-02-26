@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: drink-deploy
+  namespace: foo
+  labels:
+    app: drink-app
+spec:
+  replicaset: 4
+  selector:
+    matachLabels:
+      app: drink-app
+  template:
+    metadata:
+      labels:
+        app: drink-app
+    spec:
+      containers:
+      - name: drink-app
+        image: replace
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 250m
+            memory: 512Mi
+      contextSecurity:
+        runAsNonRoot: true
+        runAsuser
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drink-service
+  namespace: foo
+spec:
+  type: LoadBalancer
+  selector:
+    app: drink-app
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+            
+
