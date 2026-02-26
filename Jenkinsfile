@@ -5,11 +5,10 @@ pipeline{
         choice(name: 'terraformAction',choices: ['apply','destroy'],description: 'Choose your terraform action')
     }
 
-    environment{
-        AWS_ACCESS_KEY_ID = credentialsId("AWS_ACCESS_KEY_ID")
-        AWS_SECRET_ACCESS_KEY_ID = credentialsId("AWS_SECRET_ACCESS_KEY")
-    }
-
+    environment {
+    AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+   }
     stages{
         stage("GIT_CLONING"){
             steps{
@@ -19,14 +18,15 @@ pipeline{
         stage("Plan"){
             steps{
                 sh '''
-                    pwd; cd eks/; terraform init
-                    pwd; cd eks/; terraform plan -out tfplan
+                    cd eks
+                    terraform init
+                    terraform plan -out=tfplan
                 '''
             }
         }
         stage("Approval"){
             steps{
-               scripts{
+               script{
                  input message:"Do you want to proceed with the Terraform action?",
                  parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                }
@@ -36,7 +36,7 @@ pipeline{
             steps{
                 sh '''
                   cd eks
-                   if [ "${TerraformAction}" = "apply" ]; then
+                   if [ "${terraformAction}" = "apply" ]; then
                     terraform apply tfplan
                 else
                     terraform destroy -auto-approve
