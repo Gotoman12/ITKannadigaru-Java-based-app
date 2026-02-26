@@ -51,7 +51,7 @@ resource "aws_route_table_association" "drink-rtas" {
 
 resource "aws_security_group" "drink-cluster-sg" {
   vpc_id = aws_vpc.drink-vpc.id
-
+  name = drink-cluster-sg
    egress {
     from_port = 0
     to_port = 0
@@ -62,7 +62,7 @@ resource "aws_security_group" "drink-cluster-sg" {
 
 resource "aws_security_group" "drink-work-node-sg" {
   vpc_id = aws_vpc.drink-vpc.id
-
+   name = drink-work-node-sg
    ingress {
     from_port = 0
     to_port = 0
