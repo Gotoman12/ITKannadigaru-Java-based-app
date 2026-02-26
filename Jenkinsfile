@@ -89,7 +89,7 @@ pipeline{
                     sh 'Deployed the application in eks and pipeline : pass'
                 }
                 failure{
-                    sh 'Pipeline : failed'
+                    sh 'kubectl rollout undo deploy/drink-app -n ${NAMESPACE}'
                 }
             }
         }
@@ -103,7 +103,7 @@ pipeline{
                     credentialsId: 'kube',
                     namespace: '${NAMESPACE}',
                     restrictKubeConfigAccess: false,
-                    serverUrl: 'https://54DF911C3F6C051EFB5FC99F1B8B73ED.gr7.us-east-1.eks.amazonaws.com'
+                    serverUrl: ''
                 )
                     {
                         sh '''
