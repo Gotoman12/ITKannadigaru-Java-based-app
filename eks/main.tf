@@ -4,6 +4,8 @@ provider "aws" {
 
 resource "aws_vpc" "drink-vpc" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support = true
   tags = {
     Name : "drink-vpc"
   }
@@ -14,7 +16,7 @@ resource "aws_subnet" "drink-subnet" {
   vpc_id = aws_vpc.drink-vpc.id
   count = 2
   availability_zone = element(["us-east-1a", "us-east-1b"], count.index)
-  cidr_block = cidrsubnet(aws_vpc.drink-vpc.cidr_block,count.index)
+  cidr_block = cidrsubnet(aws_vpc.drink-vpc.cidr_block,8,count.index)
   map_public_ip_on_launch = true
   tags = {
     Name: "drink-subnet-${count.index}"
@@ -22,7 +24,7 @@ resource "aws_subnet" "drink-subnet" {
 }
 
 resource "aws_route_table" "drink-rt" {
-  vpc_id = aws_subnet.drink-subnet.id
+  vpc_id = aws_vpc.drink-vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -42,6 +44,7 @@ resource "aws_internet_gateway" "drink-igw" {
 }
 
 resource "aws_route_table_association" "drink-rtas" {
+  count = 2
   route_table_id = aws_route_table.drink-rt.id
   subnet_id = aws_subnet.drink-subnet[count.index].id
 }
@@ -142,7 +145,7 @@ resource "aws_eks_cluster" "drink-cluster" {
   role_arn = aws_iam_role.drink_eks_cluster_role.arn
 
   vpc_config{
-    subnet_ids = aws_subnet.drink-subent[*].id
+    subnet_ids = aws_subnet.drink-subnet[*].id
     security_group_ids = [aws_security_group.drink-cluster-sg.id]
   } 
 
