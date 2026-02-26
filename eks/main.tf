@@ -161,7 +161,9 @@ resource "aws_eks_node_group" "drink-node-group" {
   node_group_name = "drink-node-group"
   node_role_arn = aws_iam_role.drink_eks_node_role.arn
 
-  subnet_ids = aws_subnet.drink-subent[*].id
+  subnet_ids = aws_subnet.drink-subnet[*].id
+ 
+
    scaling_config {
      min_size = 3
      max_size = 50
@@ -175,10 +177,10 @@ resource "aws_eks_node_group" "drink-node-group" {
     source_security_group_ids = [aws_security_group.drink-work-node-sg.id]
   }
 
-  depends_on = [ 
-    aws_iam_role_policy_attachment.cni-policy,
-    aws_aws_iam_role_policy_attachment.container-policy,
-    aws_aws_iam_role_policy_attachment.node-policy
-   ]
+  depends_on = [
+  aws_iam_role_policy_attachment.cni-policy,
+  aws_iam_role_policy_attachment.container-policy,
+  aws_iam_role_policy_attachment.node-policy
+]
 }
 
