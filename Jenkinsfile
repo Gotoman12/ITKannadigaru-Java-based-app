@@ -27,7 +27,7 @@ pipeline{
         stage("Approval"){
             steps{
                script{
-                 input message:"Do you want to proceed with the Terraform action?",
+                 input message:"Do you want to proceed with the Terraform action?"
                }
             }
         }
