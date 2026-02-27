@@ -6,21 +6,25 @@ metadata:
   labels:
     app: drink-app
 spec:
-  replicaset: 4
+  replicas: 4
   selector:
-    matachLabels:
+    matchLabels:
       app: drink-app
   template:
     metadata:
       labels:
         app: drink-app
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
       - name: drink-app
         image: replace
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+
         livenessProbe:
           httpGet:
             path: /
@@ -28,12 +32,14 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 60
           failureThreshold: 3
+
         readinessProbe:
           httpGet:
             path: /
             port: 8080
           initialDelaySeconds: 3
           periodSeconds: 5
+
         resources:
           requests:
             cpu: 250m
@@ -41,9 +47,6 @@ spec:
           limits:
             cpu: 250m
             memory: 512Mi
-      contextSecurity:
-        runAsNonRoot: true
-        runAsUser: 1000
 ---
 apiVersion: v1
 kind: Service
@@ -58,5 +61,3 @@ spec:
   - port: 80
     targetPort: 8080
     protocol: TCP
-            
-
