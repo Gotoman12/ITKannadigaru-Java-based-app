@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drinks-blue
+  namespace: foo
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: drinks-app
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: drinks-app
+        version: blue
+    spec:
+      containers:
+      - name: drinks-app
+        image: adamtravis/rollouts:blue
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drinks-service-blue
+  namespace: foo
+spec:
+  selector:
+    app: drink-app
+    version: blue   # switch to green during rollout
+  ports:
+  - port: 80
+    targetPort: 8080
