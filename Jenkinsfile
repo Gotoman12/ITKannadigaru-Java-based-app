@@ -53,6 +53,7 @@ pipeline{
         stage("Docker PUSH"){
            steps{
             sh 'docker push ${FINALIAMGE}'
+            sh "echo Using image: ${FINALIAMGE}"
            }
         }
         stage("K8s update"){
@@ -73,10 +74,10 @@ pipeline{
                     serverUrl: 'https://B8E6BC948B3311CCA4C6FB401E20EF84.gr7.us-east-1.eks.amazonaws.com'
                 )
                     {
-                        sh '''
+                        sh """
                             sed -i 's|replace|${FINALIAMGE}|g' deployment.yaml
                             kubectl apply -f deployment.yaml -n ${NAMESPACE} --timeout=600s
-                        '''
+                        """
                     }
                 }
             }
