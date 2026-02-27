@@ -98,7 +98,7 @@ pipeline{
 
             // Get active color safely
             def active = sh(
-                script: "kubectl get svc drink-service -n ${NAMESPACE} -o jsonpath='{.spec.selector.version}' || echo 'none'",
+                script: "kubectl get svc drinks-service -n ${NAMESPACE} -o jsonpath='{.spec.selector.version}' || echo 'none'",
                 returnStdout: true
             ).trim()
 
