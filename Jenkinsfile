@@ -92,7 +92,7 @@ pipeline{
                 }
             }
         }
-          stage("Deploy K8s"){
+          stage("Deploy Verify"){
             steps{
                 script{
                     withKubeConfig(
