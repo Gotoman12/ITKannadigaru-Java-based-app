@@ -109,14 +109,14 @@ pipeline{
 
             // Deploy target version
             sh """
-                kubectl set image deployment/drink-${target} drink-app=${FINALIAMGE} -n ${NAMESPACE}
+                kubectl set image deployment/drink-${target} drinks-app=${FINALIAMGE} -n ${NAMESPACE}
                 kubectl rollout status deployment/drink-${target} -n ${NAMESPACE}
             """
 
             // Switch traffic only after success
             sh """
                 kubectl patch svc drink-service -n ${NAMESPACE} \
-                -p '{"spec":{"selector":{"app":"drink-app","version":"${target}"}}}'
+                -p '{"spec":{"selector":{"app":"drinks-app","version":"${target}"}}}'
             """
 
             echo "Switched traffic to ${target}"
