@@ -74,7 +74,7 @@ pipeline{
                 )
                     {
                         sh '''
-                            sed -i "s|replace|${FINALIAMGE}|g' deployment.yaml
+                            sed -i 's|replace|${FINALIAMGE}|g' deployment.yaml
                             kubectl apply -f deployment.yaml -n ${NAMESPACE} --timeout=600s
                         '''
                     }
@@ -96,7 +96,7 @@ pipeline{
             steps{
                 script{
                     withKubeConfig(
-                         caCertificate: '',
+                    caCertificate: '',
                     clusterName: '${CLUSTERNAME}',
                     contextName: '',
                     credentialsId: 'kube',
