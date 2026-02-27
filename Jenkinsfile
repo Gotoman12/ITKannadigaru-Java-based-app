@@ -39,7 +39,7 @@ pipeline{
         stage("Docker Login"){
            steps{
              script{
-                withCredentials([usernamePassword(credentialsId::"DOCKER_CRED",usernameVariable:"DOCKER_USER",passwordVariable:"DOCKER_PASS")]){
+                withCredentials([usernamePassword(credentialsId:"DOCKER_CRED",usernameVariable:"DOCKER_USER",passwordVariable:"DOCKER_PASS")]){
                      sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
              }
@@ -70,13 +70,12 @@ pipeline{
                     credentialsId: 'kube',
                     namespace: '${NAMESPACE}',
                     restrictKubeConfigAccess: false,
-                    serverUrl: 'https://54DF911C3F6C051EFB5FC99F1B8B73ED.gr7.us-east-1.eks.amazonaws.com'
+                    serverUrl: 'https://B8E6BC948B3311CCA4C6FB401E20EF84.gr7.us-east-1.eks.amazonaws.com'
                 )
                     {
                         sh '''
                             sed -i "s|replace|${FINALIAMGE}|g' deployment.yaml
                             kubectl apply -f deployment.yaml -n ${NAMESPACE} --timeout=600s
-                            kubectl apply -f service.yaml -n ${NAMESPACE}
                         '''
                     }
                 }
