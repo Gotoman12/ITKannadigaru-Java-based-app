@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: drinks-app
-        image: adamtravis/rollouts:green
+        image: replace
         ports:
         - containerPort: 8080

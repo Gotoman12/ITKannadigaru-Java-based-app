@@ -76,7 +76,9 @@ pipeline{
                     {
                         sh """
                             cd JenkinsBlueGreen
+                            sed -i 's|replace|${FINALIAMGE}|g' bluedeployment.yaml
                             kubectl apply -f bluedeployment.yaml -n ${NAMESPACE} --timeout=600s
+                            sed -i 's|replace|${FINALIAMGE}|g' greendeployment.yaml
                             kubectl apply -f greendeployment.yaml -n ${NAMESPACE} --timeout=600s
                         """
                     }
@@ -118,7 +120,7 @@ pipeline{
 
             // Deploy target version
             sh """
-                kubectl set image deployment/drink-${target} drinks-app=adamtravis/rollouts:green -n ${NAMESPACE}
+                kubectl set image deployment/drink-${target} drinks-app=${FINALIAMGE} -n ${NAMESPACE}
                 kubectl rollout status deployment/drink-${target} -n ${NAMESPACE}
             """
 
