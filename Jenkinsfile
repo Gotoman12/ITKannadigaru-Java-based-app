@@ -81,9 +81,6 @@ pipeline{
                 }
             }
             post{
-                always{
-                    sh 'kubectl rollout status deploy/drink-app -n ${NAMESPACE}' 
-                }
                 success{
                     sh 'Deployed the application in eks and pipeline : pass'
                 }
