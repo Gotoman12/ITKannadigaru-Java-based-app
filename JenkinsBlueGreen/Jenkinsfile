@@ -109,7 +109,7 @@ pipeline{
 
             // Deploy target version
             sh """
-                kubectl set image deployment/drink-${target} drinks-app=${FINALIAMGE} -n ${NAMESPACE}
+                kubectl set image deployment/drink-${target} drinks-app=adamtravis/rollouts:green -n ${NAMESPACE}
                 kubectl rollout status deployment/drink-${target} -n ${NAMESPACE}
             """
 
