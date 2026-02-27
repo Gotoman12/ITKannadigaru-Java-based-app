@@ -64,7 +64,7 @@ pipeline{
             steps{
                 script{
                     withKubeConfig(
-                         caCertificate: '',
+                    caCertificate: '',
                     clusterName: '${CLUSTERNAME}',
                     contextName: '',
                     credentialsId: 'kube',
