@@ -27,6 +27,7 @@ metadata:
   name: drinks-service
   namespace: foo
 spec:
+  type: LoadBalancer
   selector:
     app: drinks-app
     version: blue
