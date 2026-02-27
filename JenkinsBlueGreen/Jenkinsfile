@@ -95,7 +95,16 @@ pipeline{
         stage("Blue-Green Switch") {
     steps {
         script {
-
+            withKubeConfig(
+                    caCertificate: '',
+                    clusterName: '${CLUSTERNAME}',
+                    contextName: '',
+                    credentialsId: 'kube',
+                    namespace: '${NAMESPACE}',
+                    restrictKubeConfigAccess: false,
+                    serverUrl: 'https://B8E6BC948B3311CCA4C6FB401E20EF84.gr7.us-east-1.eks.amazonaws.com'
+                )
+              {
             // Get active color safely
             def active = sh(
                 script: "kubectl get svc drinks-service -n ${NAMESPACE} -o jsonpath='{.spec.selector.version}' || echo 'none'",
@@ -120,6 +129,7 @@ pipeline{
             """
 
             echo "Switched traffic to ${target}"
+              }
 
         }
     }
