@@ -16,7 +16,7 @@ spec:
         version: green
     spec:
       containers:
-      - name: drink-app
+      - name: drinks-app
         image: adamtravis/rollouts:green
         ports:
         - containerPort: 8080
@@ -28,7 +28,7 @@ metadata:
   namespace: foo
 spec:
   selector:
-    app: drink-app
+    app: drinks-app
     version: green   # switch to green during rollout
   ports:
   - port: 80
