@@ -20,16 +20,3 @@ spec:
         image: adamtravis/rollouts:green
         ports:
         - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: drinks-service-green
-  namespace: foo
-spec:
-  selector:
-    app: drinks-app
-    version: green   # switch to green during rollout
-  ports:
-  - port: 80
-    targetPort: 8080
