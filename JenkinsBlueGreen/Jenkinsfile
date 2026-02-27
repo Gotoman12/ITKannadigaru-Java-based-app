@@ -126,7 +126,7 @@ pipeline{
 
             // Switch traffic only after success
             sh """
-                kubectl patch svc drink-service -n ${NAMESPACE} \
+                kubectl patch svc drinks-service -n ${NAMESPACE} \
                 -p '{"spec":{"selector":{"app":"drinks-app","version":"${target}"}}}'
             """
 
