@@ -82,7 +82,8 @@ pipeline{
             }
             post{
                 success{
-                    sh 'Deployed the application in eks and pipeline : pass'
+                   echo "Deployed the application in EKS and pipeline: PASS"
+
                 }
                 failure{
                     sh 'kubectl rollout undo deploy/drink-app -n ${NAMESPACE}'
