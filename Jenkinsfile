@@ -102,7 +102,7 @@ pipeline{
                     credentialsId: 'kube',
                     namespace: '${NAMESPACE}',
                     restrictKubeConfigAccess: false,
-                    serverUrl: ''
+                    serverUrl: 'https://B8E6BC948B3311CCA4C6FB401E20EF84.gr7.us-east-1.eks.amazonaws.com'
                 )
                     {
                         sh '''
