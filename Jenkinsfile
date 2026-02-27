@@ -57,7 +57,7 @@ pipeline{
         }
         stage("K8s update"){
            steps{
-            sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
+            sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTERNAME}'
            }
         }
         stage("Deploy K8s"){
