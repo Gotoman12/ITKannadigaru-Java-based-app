@@ -46,3 +46,72 @@ This project is configured with a CI/CD pipeline that automates the build, test,
 4.  **Build Docker Image**: Builds a Docker image of the application.
 5.  **Push Docker Image**: Pushes the Docker image to a container registry.
 6.  **Deploy**: Deploys the application to a target environment.
+
+
+eksctl create cluster --name canary-development  \
+--region us-east-1 \
+--node-type c7i-flex.large \
+--nodes-min 2 \
+--nodes-max 4 \ 
+--zones us-east-1a,us-east-1b
+
+eksctl utils associate-iam-oidc-provider \
+  --cluster=canary-development \
+  --region=us-east-1 \
+  --approve
+
+eksctl delete cluster canary-development --region us-east-1 
+
+eksctl create iamserviceaccount \
+  --cluster=canary-development \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --attach-policy-arn=arn:aws:iam::340350203875:policy/AWSLoadBalancerControllerIAMPolicy \
+  --approve
+
+sed -i.bak -e 's|your-cluster-name|my-cluster|' ./v2_14_1_full.yaml
+
+---------------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/actions.weighted-routing: >
+      {
+        "type":"forward",
+        "forwardConfig":{
+          "targetGroups":[
+            {
+              "serviceName":"canary-service-blue",
+              "servicePort":"80",
+              "weight":80
+            },
+            {
+              "serviceName":"canary-service-green",
+              "servicePort":"80",
+              "weight":20
+            }
+          ]
+        }
+      }
+spec:
+  rules:
+  - host: echo.stage.mydomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: weighted-routing
+            port:
+              name: use-annotation
+
+for i in $(seq 1 20); do
+  curl -s -H "Host: echo.stage.mydomain.com" \
+  http://k8s-foo-producti-a7d3b33be3-1507387758.us-east-1.elb.amazonaws.com \
+  | grep Hostname
+done

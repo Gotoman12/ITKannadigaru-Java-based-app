@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-blue
+  namespace: foo
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: canary-blue
+  template:
+    metadata:
+      labels:
+        app: canary-blue
+    spec:
+      containers:
+      - name: canary-blue
+        image: adamtravis/rollouts:blue
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-service-blue
+  namespace: foo
+spec:
+  selector:
+    app: canary-blue
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
