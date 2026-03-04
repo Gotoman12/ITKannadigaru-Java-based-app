@@ -9,7 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
 spec:
   rules:
-  - host: echo.stage.mydomain.com
+  - host: moulya-arjun-vidya.duckdns.org
     http:
       paths:
       - path: /
